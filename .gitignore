@@ -1,0 +1,7 @@
+Dockerfile.conda
+Dockerfile.pypi
+*.fq.gz
+*.fna
+*.sif
+aviary_docker_out/
+aviary_apptainer_out/
