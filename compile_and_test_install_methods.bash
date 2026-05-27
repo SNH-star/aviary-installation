@@ -23,7 +23,7 @@ docker build --no-cache --progress=plain -f Dockerfile.pypi . &> pypi.build.log
 # Test docker install
 echo "Testing docker aviary .."
 chmod g+rw .
-bash -c "docker pull ghcr.io/snh-star/aviary:$AVIARY_VERSION && docker run -v \`pwd\`:/data ghcr.io/snh-star/aviary:$AVIARY_VERSION assemble \
+bash -c "docker pull wwood/aviary:$AVIARY_VERSION && docker run -v \`pwd\`:/data wwood/aviary:$AVIARY_VERSION assemble \
     -1 /data/wgsim.1.fq.gz \
     -2 /data/wgsim.2.fq.gz \
     --use-megahit \
@@ -34,7 +34,7 @@ bash -c "docker pull ghcr.io/snh-star/aviary:$AVIARY_VERSION && docker run -v \`
 # Test apptainer install
 echo "Testing apptainer aviary .."
 rm -f aviary_$AVIARY_VERSION.sif
-bash -c "apptainer pull docker://ghcr.io/snh-star/aviary:$AVIARY_VERSION && apptainer run --cleanenv -B \`pwd\`:\`pwd\` aviary_$AVIARY_VERSION.sif assemble \
+bash -c "apptainer pull docker://wwood/aviary:$AVIARY_VERSION && apptainer run --cleanenv -B \`pwd\`:\`pwd\` aviary_$AVIARY_VERSION.sif assemble \
     -1 \`pwd\`/wgsim.1.fq.gz \
     -2 \`pwd\`/wgsim.2.fq.gz \
     --use-megahit \
