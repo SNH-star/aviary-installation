@@ -1,0 +1,7 @@
+bash: line 1: apptainer: command not found
+bash: line 2: -1: command not found
+bash: line 3: -2: command not found
+bash: line 4: --use-megahit: command not found
+bash: line 5: --skip-qc: command not found
+bash: line 6: -o: command not found
+bash: line 7: -n: command not found

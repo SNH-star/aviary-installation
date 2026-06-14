@@ -1,3 +1,4 @@
 *.fq.gz
 *.fna
 *.sif
+aviary_docker_out/*

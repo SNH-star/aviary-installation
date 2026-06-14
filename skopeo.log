@@ -1,0 +1,11 @@
+Getting image source signatures
+Copying blob sha256:ce77260a0426727b1a11222d3e57ceb03974657ac9eb75e3e9c32e345d385e0c
+Copying blob sha256:c93d0b749b2a0240afa536883b3712edac3468d65013962d143c4aa2bb8a73a5
+Copying blob sha256:7de5bae542caac7e2fa8a83166b168ed5ae28d662a183b9ab35bed76babf9082
+Copying blob sha256:534f1e3047fad96931543bf503239845d897ccfd98b350bf68dc0780b8f7f493
+Copying blob sha256:7b4e36b228986dfca2bc2d6927fdaacfd86144e281fae2703d0711e700ec9091
+Copying blob sha256:8a31bbfae1e0cde31745036708c025fd4402f48b1e84aa9acd33f45c338b4dde
+time="2026-06-13T23:30:00+10:00" level=info msg="Reading blob body from https://ghcr.io/v2/snh-star/aviary/blobs/sha256:7b4e36b228986dfca2bc2d6927fdaacfd86144e281fae2703d0711e700ec9091 failed (unexpected EOF), reconnecting after 4550819841 bytes…"
+time="2026-06-13T23:40:00+10:00" level=info msg="Reading blob body from https://ghcr.io/v2/snh-star/aviary/blobs/sha256:7b4e36b228986dfca2bc2d6927fdaacfd86144e281fae2703d0711e700ec9091 failed (unexpected EOF), reconnecting after 8084520960 bytes…"
+Copying config sha256:ed8a0cc84e1c14e2e5b9b8ce27db96d5641c969f2b2f418e29de5fdfaaeef85c
+Writing manifest to image destination

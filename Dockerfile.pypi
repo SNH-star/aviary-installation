@@ -1,0 +1,64 @@
+FROM ubuntu:24.04
+
+# Install dependencies
+RUN apt-get update \
+    && apt-get install -y build-essential wget curl git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install miniconda
+ENV CONDA_DIR /opt/conda
+
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda
+
+# Put conda in path
+ENV PATH=$CONDA_DIR/bin:$PATH
+
+# Install pixi (required for aviary sub-environments)
+RUN curl -fsSL https://pixi.sh/install.sh | bash && \
+    ln -s /root/.pixi/bin/pixi /usr/local/bin/pixi
+
+# Clone aviary to get environment.yml
+RUN git clone https://github.com/rhysnewell/aviary.git /aviary && \
+    cd /aviary && git checkout v0.13.0
+
+# Accept conda Terms of Service
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+# Create conda environment from environment.yml (includes bird_tool_utils)
+RUN CONDA_NO_PLUGINS=true conda env create --solver=classic -n aviary -f /aviary/environment.yml && \
+    /opt/conda/envs/aviary/bin/pip install "snakemake>=9.0" && \
+    /opt/conda/envs/aviary/bin/pip install bird-tool-utils
+
+# activate the aviary environment and ensure pixi is in PATH
+RUN echo "source activate aviary" > ~/.bashrc
+ENV PATH=$CONDA_DIR/envs/aviary/bin:/root/.pixi/bin:$CONDA_DIR/bin:$PATH
+
+# Install aviary-genome via pip on top of the conda environment
+RUN pip install --no-deps aviary-genome==0.13.0
+
+# Download some example data so we can test the installation
+RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.1.fq.gz
+RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.2.fq.gz
+
+# Build aviary pixi sub-environments
+RUN /opt/conda/envs/aviary/bin/aviary build
+
+# Set required database paths to arbitrary values since we're only testing assemble and they are not baked in
+ENV GTDBTK_DATA_PATH=/tmp \
+    EGGNOG_DATA_DIR=/tmp \
+    METABULI_DB_PATH=/tmp \
+    SINGLEM_METAPACKAGE_PATH=/tmp \
+    CHECKM2DB=/tmp \
+    CHECKM_DATA_PATH=/tmp
+
+# Run aviary assemble with megahit on the test reads
+RUN /opt/conda/envs/aviary/bin/aviary assemble \
+    -1 wgsim.1.fq.gz \
+    -2 wgsim.2.fq.gz \
+    --use-megahit \
+    --skip-qc \
+    -o aviary_test_out \
+    -n 4 -t 4

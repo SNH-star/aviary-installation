@@ -1,0 +1,132 @@
+v0.13.0: Pulling from snh-star/aviary
+ce77260a0426: Pulling fs layer
+534f1e3047fa: Pulling fs layer
+7b4e36b22898: Pulling fs layer
+c93d0b749b2a: Pulling fs layer
+8a31bbfae1e0: Pulling fs layer
+7de5bae542ca: Pulling fs layer
+c5f0febe69ab: Download complete
+c93d0b749b2a: Download complete
+8a31bbfae1e0: Download complete
+ce77260a0426: Download complete
+534f1e3047fa: Download complete
+7de5bae542ca: Download complete
+7b4e36b22898: Download complete
+c93d0b749b2a: Pull complete
+534f1e3047fa: Pull complete
+7de5bae542ca: Pull complete
+7b4e36b22898: Pull complete
+8a31bbfae1e0: Pull complete
+ce77260a0426: Pull complete
+Digest: sha256:e7eddf70a743a4740ac0e5a9e350d5198aaa25f661e72d485ab2194f7ec91190
+Status: Downloaded newer image for ghcr.io/snh-star/aviary:v0.13.0
+ghcr.io/snh-star/aviary:v0.13.0
+06/11/2026 01:35:36 AM INFO: Time - 01:35:36 11-06-2026
+06/11/2026 01:35:36 AM INFO: Command - /aviary/.pixi/envs/default/bin/aviary assemble -1 /data/wgsim.1.fq.gz -2 /data/wgsim.2.fq.gz --use-megahit --skip-qc -o /data/aviary_docker_out -n 4 -t 4
+06/11/2026 01:35:36 AM INFO: Version - 0.13.0
+06/11/2026 01:35:36 AM INFO: Configuration file written to /data/aviary_docker_out/config.yaml
+06/11/2026 01:35:36 AM INFO: Executing: snakemake --snakefile /aviary/.pixi/envs/default/lib/python3.13/site-packages/aviary/modules/Snakefile --directory /data/aviary_docker_out --cores 4 --local-cores 16 --rerun-incomplete --keep-going  --rerun-triggers mtime --resources mem_mb=256000   --configfile /data/aviary_docker_out/config.yaml --nolock  --retries 0   complete_assembly_with_qc
+Assuming unrestricted shared filesystem usage.
+host: cc9a4478df20
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Provided resources: mem_mb=256000
+Job stats:
+job                          count
+-------------------------  -------
+assemble_short_reads             1
+complete_assembly_with_qc        1
+complete_qc_short                1
+move_spades_assembly             1
+rastqc                           1
+total                            5
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Jun 11 01:35:37 2026]
+localrule assemble_short_reads:
+    input: /data/wgsim.1.fq.gz
+    output: data/short_read_assembly/scaffolds.fasta, data/short_read_assembly, data/short_read_assembly/assembly_graph_with_scaffolds.gfa
+    jobid: 2
+    benchmark: benchmarks/short_read_assembly_short.benchmark.txt
+    reason: Missing output files: data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/short_read_assembly/scaffolds.fasta
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=256000, mem_mib=244141, runtime=5760, log_path=logs/assemble_short_reads/20260611_013537/attempt1.log
+Select jobs to execute...
+2026-06-11 01:36:11.961 | INFO     | agtools.cli:begin_agtools:323 - agtools: A Software Framework to Manipulate Assembly Graphs
+2026-06-11 01:36:11.962 | INFO     | agtools.cli:begin_agtools:324 - You are using agtools version 1.0.2
+2026-06-11 01:36:11.963 | INFO     | agtools.cli:begin_agtools:326 - Repository homepage is https://github.com/Vini2/agtools
+2026-06-11 01:36:11.964 | INFO     | agtools.cli:begin_agtools:327 - You are running agtools fastg2gfa
+2026-06-11 01:36:11.965 | INFO     | agtools.cli:begin_agtools:328 - Listing parameters
+2026-06-11 01:36:11.966 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --graph ('data/megahit_assembly/intermediate_contigs/k141.fastg',)
+2026-06-11 01:36:11.966 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --output data/short_read_assembly/gfa_tmp
+2026-06-11 01:36:11.967 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --ksize 141
+2026-06-11 01:36:11.968 | INFO     | agtools.cli:fastg2gfa:232 - Converting FASTG file data/megahit_assembly/intermediate_contigs/k141.fastg to GFA format
+2026-06-11 01:36:11.968 | INFO     | agtools.cli:fastg2gfa:233 - k-mer size 141 will be used as the overlap
+2026-06-11 01:36:12.048 | INFO     | agtools.cli:fastg2gfa:237 - GFA file is written to data/short_read_assembly/gfa_tmp/converted_graph.gfa with fixed overlap: 141M
+[Thu Jun 11 01:36:12 2026]
+Finished jobid: 2 (Rule: assemble_short_reads)
+1 of 5 steps (20%) done
+Execute 1 jobs...
+
+[Thu Jun 11 01:36:12 2026]
+localrule move_spades_assembly:
+    input: data/short_read_assembly/scaffolds.fasta
+    output: data/final_contigs.fasta
+    log: logs/move_spades_assembly.log
+    jobid: 1
+    reason: Missing output files: data/final_contigs.fasta; Input files updated by another job: data/short_read_assembly/scaffolds.fasta
+    priority: 1
+    resources: tmpdir=/tmp
+[Thu Jun 11 01:36:12 2026]
+Finished jobid: 1 (Rule: move_spades_assembly)
+2 of 5 steps (40%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Jun 11 01:36:12 2026]
+localrule rastqc:
+    input: /data/wgsim.1.fq.gz
+    output: www/rastqc/done
+    jobid: 4
+    benchmark: benchmarks/rastqc_short.benchmark.txt
+    reason: Missing output files: www/rastqc/done
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=131072, mem_mib=125000, runtime=720, log_path=logs/rastqc/20260611_013537/attempt1.log
+[Thu Jun 11 01:36:14 2026]
+Finished jobid: 4 (Rule: rastqc)
+3 of 5 steps (60%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Jun 11 01:36:14 2026]
+localrule complete_qc_short:
+    input: www/rastqc/done
+    output: data/qc_done
+    jobid: 3
+    reason: Missing output files: data/qc_done; Input files updated by another job: www/rastqc/done
+    resources: tmpdir=/tmp
+[Thu Jun 11 01:36:14 2026]
+Finished jobid: 3 (Rule: complete_qc_short)
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Thu Jun 11 01:36:14 2026]
+localrule complete_assembly_with_qc:
+    input: data/final_contigs.fasta, data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/qc_done
+    output: assembly/final_contigs.fasta, assembly/assembly_graph.gfa, www/assembly_stats.txt
+    jobid: 0
+    reason: Missing output files: assembly/final_contigs.fasta, assembly/assembly_graph.gfa, www/assembly_stats.txt; Input files updated by another job: data/qc_done, data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/final_contigs.fasta
+    resources: tmpdir=/tmp
+WARNING: Using incubator modules: jdk.incubator.vector
+[Thu Jun 11 01:36:15 2026]
+Finished jobid: 0 (Rule: complete_assembly_with_qc)
+5 of 5 steps (100%) done
+Removing temporary output data/qc_done.
+Complete log(s): /data/aviary_docker_out/.snakemake/log/2026-06-11T013537.144348.snakemake.log
+Aviary finished, no error
+06/11/2026 01:36:16 AM INFO: Finished: complete_assembly_with_qc

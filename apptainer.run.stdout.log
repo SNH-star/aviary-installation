@@ -1,0 +1,12 @@
+2026-06-14 00:53:15.172 | INFO     | agtools.cli:begin_agtools:323 - agtools: A Software Framework to Manipulate Assembly Graphs
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:324 - You are using agtools version 1.0.2
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:326 - Repository homepage is https://github.com/Vini2/agtools
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:327 - You are running agtools fastg2gfa
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:328 - Listing parameters
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --graph ('data/megahit_assembly/intermediate_contigs/k141.fastg',)
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --output data/short_read_assembly/gfa_tmp
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:begin_agtools:331 - Parameter: --ksize 141
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:fastg2gfa:232 - Converting FASTG file data/megahit_assembly/intermediate_contigs/k141.fastg to GFA format
+2026-06-14 00:53:15.173 | INFO     | agtools.cli:fastg2gfa:233 - k-mer size 141 will be used as the overlap
+2026-06-14 00:53:15.177 | INFO     | agtools.cli:fastg2gfa:237 - GFA file is written to data/short_read_assembly/gfa_tmp/converted_graph.gfa with fixed overlap: 141M
+Aviary finished, no error

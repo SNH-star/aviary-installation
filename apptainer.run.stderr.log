@@ -1,0 +1,102 @@
+INFO:    squashfuse not found, will not be able to mount SIF or other squashfs files
+INFO:    fuse2fs not found, will not be able to mount EXT3 filesystems
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+INFO:    Converting SIF file to temporary sandbox...
+06/14/2026 12:52:46 AM INFO: Time - 00:52:46 14-06-2026
+06/14/2026 12:52:46 AM INFO: Command - /aviary/.pixi/envs/default/bin/aviary assemble -1 /home/herholdt/aviary-installation/wgsim.1.fq.gz -2 /home/herholdt/aviary-installation/wgsim.2.fq.gz --use-megahit --skip-qc -o /home/herholdt/aviary-installation/aviary_apptainer_out -n 4 -t 4
+06/14/2026 12:52:46 AM INFO: Version - 0.13.0
+06/14/2026 12:52:46 AM INFO: Configuration file written to /home/herholdt/aviary-installation/aviary_apptainer_out/config.yaml
+06/14/2026 12:52:47 AM INFO: Executing: snakemake --snakefile /aviary/.pixi/envs/default/lib/python3.13/site-packages/aviary/modules/Snakefile --directory /home/herholdt/aviary-installation/aviary_apptainer_out --cores 4 --local-cores 16 --rerun-incomplete --keep-going  --rerun-triggers mtime --resources mem_mb=256000   --configfile /home/herholdt/aviary-installation/aviary_apptainer_out/config.yaml --nolock  --retries 0   complete_assembly_with_qc
+Assuming unrestricted shared filesystem usage.
+host: QUT5CD41485JN
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Provided resources: mem_mb=256000
+Job stats:
+job                          count
+-------------------------  -------
+assemble_short_reads             1
+complete_assembly_with_qc        1
+complete_qc_short                1
+move_spades_assembly             1
+rastqc                           1
+total                            5
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Sun Jun 14 00:52:48 2026]
+localrule assemble_short_reads:
+    input: /home/herholdt/aviary-installation/wgsim.1.fq.gz
+    output: data/short_read_assembly/scaffolds.fasta, data/short_read_assembly, data/short_read_assembly/assembly_graph_with_scaffolds.gfa
+    jobid: 2
+    benchmark: benchmarks/short_read_assembly_short.benchmark.txt
+    reason: Missing output files: data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/short_read_assembly/scaffolds.fasta
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=256000, mem_mib=244141, runtime=5760, log_path=logs/assemble_short_reads/20260614_005248/attempt1.log
+Select jobs to execute...
+[Sun Jun 14 00:53:15 2026]
+Finished jobid: 2 (Rule: assemble_short_reads)
+1 of 5 steps (20%) done
+Execute 1 jobs...
+
+[Sun Jun 14 00:53:15 2026]
+localrule move_spades_assembly:
+    input: data/short_read_assembly/scaffolds.fasta
+    output: data/final_contigs.fasta
+    log: logs/move_spades_assembly.log
+    jobid: 1
+    reason: Missing output files: data/final_contigs.fasta; Input files updated by another job: data/short_read_assembly/scaffolds.fasta
+    priority: 1
+    resources: tmpdir=/tmp
+Select jobs to execute...
+[Sun Jun 14 00:53:15 2026]
+Finished jobid: 1 (Rule: move_spades_assembly)
+2 of 5 steps (40%) done
+Execute 1 jobs...
+
+[Sun Jun 14 00:53:15 2026]
+localrule rastqc:
+    input: /home/herholdt/aviary-installation/wgsim.1.fq.gz
+    output: www/rastqc/done
+    jobid: 4
+    benchmark: benchmarks/rastqc_short.benchmark.txt
+    reason: Missing output files: www/rastqc/done
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=131072, mem_mib=125000, runtime=720, log_path=logs/rastqc/20260614_005248/attempt1.log
+[Sun Jun 14 00:53:17 2026]
+Finished jobid: 4 (Rule: rastqc)
+3 of 5 steps (60%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Sun Jun 14 00:53:17 2026]
+localrule complete_qc_short:
+    input: www/rastqc/done
+    output: data/qc_done
+    jobid: 3
+    reason: Missing output files: data/qc_done; Input files updated by another job: www/rastqc/done
+    resources: tmpdir=/tmp
+[Sun Jun 14 00:53:17 2026]
+Finished jobid: 3 (Rule: complete_qc_short)
+4 of 5 steps (80%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Sun Jun 14 00:53:17 2026]
+localrule complete_assembly_with_qc:
+    input: data/final_contigs.fasta, data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/qc_done
+    output: assembly/final_contigs.fasta, assembly/assembly_graph.gfa, www/assembly_stats.txt
+    jobid: 0
+    reason: Missing output files: assembly/final_contigs.fasta, assembly/assembly_graph.gfa, www/assembly_stats.txt; Input files updated by another job: data/short_read_assembly/assembly_graph_with_scaffolds.gfa, data/final_contigs.fasta, data/qc_done
+    resources: tmpdir=/tmp
+WARNING: Using incubator modules: jdk.incubator.vector
+[Sun Jun 14 00:53:17 2026]
+Finished jobid: 0 (Rule: complete_assembly_with_qc)
+5 of 5 steps (100%) done
+Removing temporary output data/qc_done.
+Complete log(s): /home/herholdt/aviary-installation/aviary_apptainer_out/.snakemake/log/2026-06-14T005247.774239.snakemake.log
+06/14/2026 12:53:18 AM INFO: Finished: complete_assembly_with_qc
+INFO:    Cleaning up image...
