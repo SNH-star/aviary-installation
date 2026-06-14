@@ -2,28 +2,43 @@ FROM ubuntu:22.04
 
 # install miniconda
 RUN apt-get update \
-    && apt-get install -y build-essential \
-    && apt-get install -y wget \
+    && apt-get install -y build-essential wget curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_DIR /opt/conda
+
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda
 
 # Put conda in path so we can use conda activate
 ENV PATH=$CONDA_DIR/bin:$PATH
 
+# Install pixi (required for aviary sub-environments)
+RUN curl -fsSL https://pixi.sh/install.sh | bash && \
+    ln -s /root/.pixi/bin/pixi /usr/local/bin/pixi
+
 # install aviary and dependencies. Match this invocation to the documentation
-RUN conda create -y -c conda-forge -c bioconda -n aviary --strict-channel-priority --override-channels aviary'='AVIARY_VERSION
+RUN CONDA_NO_PLUGINS=true conda create -y --solver=classic -c conda-forge -c bioconda -n aviary --strict-channel-priority --override-channels aviary'='AVIARY_VERSION
 
 # Download some example data so we can test the installation
 RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.1.fq.gz
 RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.2.fq.gz
 
-# activate the aviary environment
+# activate the aviary environment and ensure pixi is in PATH
 RUN echo "source activate aviary" > ~/.bashrc
-ENV PATH=$CONDA_DIR/envs/aviary/bin:$PATH
+ENV PATH=$CONDA_DIR/envs/aviary/bin:/root/.pixi/bin:$CONDA_DIR/bin:$PATH
+
+# Build aviary pixi sub-environments
+RUN aviary build
+
+# Set required database paths to arbitrary values since we're only testing assemble and they are not baked in
+ENV GTDBTK_DATA_PATH=/tmp \
+    EGGNOG_DATA_DIR=/tmp \
+    METABULI_DB_PATH=/tmp \
+    SINGLEM_METAPACKAGE_PATH=/tmp \
+    CHECKM2DB=/tmp \
+    CHECKM_DATA_PATH=/tmp
 
 # Run aviary assemble with megahit (fast) on the test reads
 RUN aviary assemble \

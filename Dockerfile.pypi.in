@@ -1,44 +1,61 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-# install miniconda
+# Install dependencies
 RUN apt-get update \
-    && apt-get install -y build-essential \
-    && apt-get install -y wget
-    # && apt-get clean \
-    # && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y build-essential wget curl git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y python3-pip
-
-RUN pip install aviary-genome==AVIARY_VERSION
-
-# Install non-python dependencies of Aviary via conda
+# Install miniconda
 ENV CONDA_DIR /opt/conda
+
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda
 
-# Put conda in path so we can use conda activate
+# Put conda in path
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+# Install pixi (required for aviary sub-environments)
+RUN curl -fsSL https://pixi.sh/install.sh | bash && \
+    ln -s /root/.pixi/bin/pixi /usr/local/bin/pixi
 
-# install non-python aviary dependencies for assembly mode
-RUN conda create -y -c bioconda -c conda-forge -n aviary \
-    megahit \
-    snakemake \
-    pigz \
-    parallel
+# Clone aviary to get environment.yml
+RUN git clone https://github.com/rhysnewell/aviary.git /aviary && \
+    cd /aviary && git checkout vAVIARY_VERSION
+
+# Accept conda Terms of Service
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+
+# Create conda environment from environment.yml (includes bird_tool_utils)
+RUN CONDA_NO_PLUGINS=true conda env create --solver=classic -n aviary -f /aviary/environment.yml && \
+    /opt/conda/envs/aviary/bin/pip install "snakemake>=9.0" && \
+    /opt/conda/envs/aviary/bin/pip install bird-tool-utils
+
+# activate the aviary environment and ensure pixi is in PATH
+RUN echo "source activate aviary" > ~/.bashrc
+ENV PATH=$CONDA_DIR/envs/aviary/bin:/root/.pixi/bin:$CONDA_DIR/bin:$PATH
+
+# Install aviary-genome via pip on top of the conda environment
+RUN pip install --no-deps aviary-genome==AVIARY_VERSION
 
 # Download some example data so we can test the installation
 RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.1.fq.gz
 RUN wget https://github.com/rhysnewell/aviary/raw/main/test/data/wgsim.2.fq.gz
 
-# activate the aviary environment
-RUN echo "source activate aviary" > ~/.bashrc
-ENV PATH=$CONDA_DIR/envs/aviary/bin:$PATH
+# Build aviary pixi sub-environments
+RUN /opt/conda/envs/aviary/bin/aviary build
+
+# Set required database paths to arbitrary values since we're only testing assemble and they are not baked in
+ENV GTDBTK_DATA_PATH=/tmp \
+    EGGNOG_DATA_DIR=/tmp \
+    METABULI_DB_PATH=/tmp \
+    SINGLEM_METAPACKAGE_PATH=/tmp \
+    CHECKM2DB=/tmp \
+    CHECKM_DATA_PATH=/tmp
 
 # Run aviary assemble with megahit on the test reads
-RUN aviary assemble \
+RUN /opt/conda/envs/aviary/bin/aviary assemble \
     -1 wgsim.1.fq.gz \
     -2 wgsim.2.fq.gz \
     --use-megahit \
