@@ -28,7 +28,7 @@ RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkg
     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
 # Create conda environment from environment.yml (includes bird_tool_utils)
-RUN CONDA_NO_PLUGINS=true conda env create --solver=classic -n aviary -f /aviary/environment.yml && \
+RUN CONDA_NO_PLUGINS=true conda env create --solver=classic -n aviary -f /aviary/admin/environment.yml && \
     /opt/conda/envs/aviary/bin/pip install "snakemake>=9.0" && \
     /opt/conda/envs/aviary/bin/pip install bird-tool-utils
 
